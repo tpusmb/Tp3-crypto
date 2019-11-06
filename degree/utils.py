@@ -32,7 +32,7 @@ def read_image(image_path):
     return cv2.imread(image_path)
 
 
-def save_png_image(image_path, image):
+def save_image(image_path, image):
     """
 
     :param image_path:

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
 
 import logging.handlers
 import os
 
-from degree import read_image
+from degree import *
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
@@ -25,7 +24,7 @@ PYTHON_LOGGER.setLevel(logging.DEBUG)
 FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__)))
 
 img = read_image("chablais-orig.png")
-
-for col in img:
-    for line in col:
-        b, g, r = line
+encode_img = encode_image(img, "je suis trop cool")
+save_image("encode.png", encode_img)
+img = read_image("encode.png")
+print(decode_image(img))
