@@ -3,3 +3,4 @@
 
 from .stegano import decode_image, encode_image, char_generator
 from .utils import read_image, save_image
+from .signature import encrypt, decrypt
