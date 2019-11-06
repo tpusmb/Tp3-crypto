@@ -6,7 +6,7 @@ from __future__ import absolute_import
 import logging.handlers
 import os
 
-from Crypto.Hash import SHA256
+from Crypto.Hash import SHA3_512
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
 
@@ -29,13 +29,13 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 
 def sign(path_private_key, message):
     key = RSA.import_key(open(path_private_key).read())
-    h = SHA256.new(message.encode())
+    h = SHA3_512.new(message.encode())
     return pkcs1_15.new(key).sign(h)
 
 
 def verify(path_public_key, message, signature):
     key = RSA.import_key(open(path_public_key).read())
-    h = SHA256.new(message.encode())
+    h = SHA3_512.new(message.encode())
     try:
         pkcs1_15.new(key).verify(h, signature)
         return True
