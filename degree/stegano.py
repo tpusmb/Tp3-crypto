@@ -25,57 +25,55 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 
 def char_generator(message):
     """
-
-    :param message:
-    :return:
+    Generator to parse the message. On each char transform into 8 byte parse each byte
+    :param message: (string) Message to parse
     """
     for c in message:
-        yield ord(c)
+        for str_byte in '{0:08b}'.format(ord(c)):
+            yield int(str_byte)
 
 
-def gcd(x, y):
+def bytes_to_char(bytes_str):
     """
-
-    :param x:
-    :param y:
+    Transform a bytes
+    :param bytes_str:
     :return:
     """
-    while y:
-        x, y = y, x % y
-    return x
+    return chr(int(bytes_str, 2))
 
 
 def encode_image(img, msg):
     """
-
-    :param img:
-    :param msg:
-    :return:
+    Encode a message into image
+    :param img: (ndarray) image to add the message
+    :param msg: (string) message to add
+    :return: (ndarray) image with encode message
     """
     msg_gen = char_generator(msg)
-    pattern = gcd(len(img), len(img[0]))
     for i in range(len(img)):
         for j in range(len(img[0])):
-            if (i + 1 * j + 1) % pattern == 0:
-                try:
-                    img[i - 1][j - 1][0] = next(msg_gen)
-                except StopIteration:
-                    img[i - 1][j - 1][0] = 0
-                    return img
+            try:
+                img[i - 1][j - 1][0] &= 0b11111110
+                img[i - 1][j - 1][0] |= next(msg_gen)
+            except StopIteration:
+                img[i - 1][j - 1][0] = 0
+                return img
 
 
 def decode_image(img):
     """
-
-    :param img:
-    :return:
+    Extract the message into the input image
+    :param img: (ndarray) image to extract the message
+    :return: (string) Extract message. None if no message was found
     """
-    pattern = gcd(len(img), len(img[0]))
     message = ''
+    byt_acc = ''
     for i in range(len(img)):
         for j in range(len(img[0])):
-            if (i - 1 * j - 1) % pattern == 0:
-                if img[i - 1][j - 1][0] != 0:
-                    message = message + chr(img[i - 1][j - 1][0])
-                else:
-                    return message
+            if img[i - 1][j - 1][0] != 0:
+                byt_acc += str((img[i - 1][j - 1][0] >> 0) & 1)
+                if len(byt_acc) == 8:
+                    message += bytes_to_char(byt_acc)
+                    byt_acc = ''
+            else:
+                return message
