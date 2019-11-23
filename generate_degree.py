@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Encode a message into image
+Generate an authentic degree
 
 Usage:
   generate_degree.py <private-key-path> <output-degree-file-name> <player-name> <player-score>
@@ -10,7 +10,7 @@ Usage:
 Options:
   -h --help                   Show this screen.
   <private-key-path>          Path to the private key file
-  <output-degree-file-name>   Name of the output degree file name
+  <output-degree-file-name>   Name of the output degree file name without file extention
   <player-name>               Player name
   <player-score>              Score of the player
 """

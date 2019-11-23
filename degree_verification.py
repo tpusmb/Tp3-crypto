@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Encode a message into image
+Control if the degree his authentic
 
 Usage:
   degree_verification.py <private-key-path> <degree-image-path>

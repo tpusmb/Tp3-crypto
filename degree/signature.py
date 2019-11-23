@@ -27,13 +27,26 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 
 
 def sign(path_private_key, message):
+    """
+    Sign the message
+    :param path_private_key: (string) File name to the private key
+    :param message: (string) Message to sign
+    :return: (int) sign number
+    """
     key = RSA.import_key(open(path_private_key).read())
-    hash = int.from_bytes(sha512(message.encode()).digest(), byteorder='big')
-    signature = pow(hash, key.d, key.n)
+    hash_message = int.from_bytes(sha512(message.encode()).digest(), byteorder='big')
+    signature = pow(hash_message, key.d, key.n)
     return signature
 
 
 def verify(path_public_key, message, signature):
+    """
+    Control if the input sign his correct
+    :param path_public_key: (string) File name to the private key
+    :param message: (string) Original sign  message
+    :param signature: (int) Signature to control
+    :return: (bool) True the input signature his correct
+    """
     key = RSA.import_key(open(path_public_key).read())
     hash_message = int.from_bytes(sha512(message.encode()).digest(), byteorder='big')
     hash_from_signature = pow(int(signature), key.e, key.n)

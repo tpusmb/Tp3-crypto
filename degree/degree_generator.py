@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import os
-import timeit
+
 import logging.handlers
+import os
 
 from degree import sign, generate_degree_image, encode_image, decode_image, verify
 from degree.const import COMPANY_NAME
@@ -28,11 +28,11 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 
 def sign_degree_generator(path_private_key, player_name, score):
     """
-
-    :param path_private_key:
-    :param player_name:
-    :param score:
-    :return:
+    Creat a degree with signature into the image to control if the degree is authentic
+    :param path_private_key: (string) Path to the private key file
+    :param player_name: (string) Name of the player
+    :param score: (int) Score of the player
+    :return: (ndarray) The degree image
     """
     signature = sign(path_private_key, COMPANY_NAME)
     degree_image = generate_degree_image(player_name, score)
@@ -41,10 +41,10 @@ def sign_degree_generator(path_private_key, player_name, score):
 
 def verify_degree(path_private_key, degree_image):
     """
-
-    :param path_private_key:
-    :param degree_image:
-    :return:
+    Verify if the input degree his authentic
+    :param path_private_key: (string) Path to the private key file
+    :param degree_image: (ndarray) Image of the degree to verify if his authentic
+    :return: (bool) True the degree his authentic False his not authentic
     """
     extract_signature = decode_image(degree_image)
     return verify(path_private_key, COMPANY_NAME, extract_signature)

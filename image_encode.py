@@ -44,5 +44,3 @@ PYTHON_LOGGER.info("Encode the message {} into the image {}".format(args["<messa
 img = read_image(args["<image-path>"])
 encode_img = encode_image(img, args["<message>"])
 save_image("encode.png", encode_img)
-img = read_image("encode.png")
-PYTHON_LOGGER.info("Decode message found: {}".format(decode_image(img)))

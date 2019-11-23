@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
+Generate public and private RSA key
 
 Usage:
   creat_rsa_keys.py <file-name-public-key>  <file-name-private-key> [--length=<length>]

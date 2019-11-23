@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
+import logging.handlers
+import os
+
+from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-from Crypto.Cipher import AES, PKCS1_OAEP
-import os
-import timeit
-import logging.handlers
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
@@ -28,10 +29,10 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 
 def generate_keys(path_public, path_private, length=2048):
     """
-    Create a file with a new generated private key.
-    :param path_public:
-    :param path_private:
-    :param length:
+    Create a RSA file with a new generated private key.
+    :param path_public: (string) File name to the public key
+    :param path_private: (string) File name to the private key
+    :param length: (int) Length of the key we recommande 2048
     :return: Nothing
     """
     rsa_key = RSA.generate(length)
@@ -44,10 +45,10 @@ def generate_keys(path_public, path_private, length=2048):
 
 def encrypt(message, path_public_key):
     """
-    Create a file that contains the encrypted message.
+    encrypt a message
     :param message: (String) The message to encrypt.
-    :param path_public_key: (string)
-    :return: Nothing
+    :param path_public_key: (string) File name to the public key
+    :return: (list) Encrypt message
     """
     data = message.encode("utf-8")
     public_key = RSA.import_key(open(path_public_key).read())
@@ -65,11 +66,11 @@ def encrypt(message, path_public_key):
 
 def decrypt(encrypt_message, path_private_key):
     """
-    Decrypt an encrypted message from a file.
-    :param path_private_key: (string)
+    Decrypt an encrypted message
+    :param encrypt_message: (list) Encrypt message generate by encrypt function
+    :param path_private_key: (string) File name to the private key
     :return: (String) The decrypted message.
     """
-
     private_key = RSA.import_key(open(path_private_key).read())
 
     enc_session_key, nonce, tag, ciphertext = encrypt_message

@@ -29,19 +29,19 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 
 def read_image(image_path):
     """
-
-    :param image_path:
-    :return: (ndarray) BGR image
+    Read an image
+    :param image_path: (string) path to the image
+    :return: (ndarray) opencv BGR image
     """
     return cv2.imread(image_path)
 
 
 def save_image(image_path, image):
     """
-
-    :param image_path:
-    :param image:
-    :return:
+    Save an input opencv image
+    :param image_path: (string) path to the image
+    :param image: (ndarray) opencv BGR image
+    :return: (bool) True save was success
     """
     try:
         cv2.imwrite(image_path, image)

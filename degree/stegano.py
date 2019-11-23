@@ -35,9 +35,9 @@ def char_generator(message):
 
 def bytes_to_char(bytes_str):
     """
-    Transform a bytes
-    :param bytes_str:
-    :return:
+    Transform a bytes to a char
+    :param bytes_str: (bytes) bytes to convert
+    :return: (string) converted bytes
     """
     return chr(int(bytes_str, 2))
 
