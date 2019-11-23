@@ -49,14 +49,13 @@ def encode_image(img, msg):
     :param msg: (string) message to add
     :return: (ndarray) image with encode message
     """
-    msg_gen = char_generator(msg)
+    msg_gen = char_generator("{},{}".format(len(msg), msg))
     for i in range(len(img)):
         for j in range(len(img[0])):
             try:
                 img[i - 1][j - 1][0] &= 0b11111110
                 img[i - 1][j - 1][0] |= next(msg_gen)
             except StopIteration:
-                img[i - 1][j - 1][0] = 0
                 return img
 
 
@@ -67,13 +66,19 @@ def decode_image(img):
     :return: (string) Extract message. None if no message was found
     """
     message = ''
+    message_length = None
     byt_acc = ''
     for i in range(len(img)):
         for j in range(len(img[0])):
-            if img[i - 1][j - 1][0] != 0:
+            if message_length is None or len(message) < message_length:
                 byt_acc += str((img[i - 1][j - 1][0] >> 0) & 1)
                 if len(byt_acc) == 8:
-                    message += bytes_to_char(byt_acc)
+                    decode_char = bytes_to_char(byt_acc)
+                    if decode_char == ",":
+                        message_length = int(message)
+                        message = ''
+                    else:
+                        message += bytes_to_char(byt_acc)
                     byt_acc = ''
             else:
                 return message

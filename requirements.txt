@@ -3,3 +3,4 @@ pycryptodome
 qrcode
 flask
 docopt
+tensorflow

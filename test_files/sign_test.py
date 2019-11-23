@@ -4,7 +4,7 @@
 from __future__ import absolute_import
 import os
 import logging.handlers
-from degree import sign, verify
+from degree import sign, verify, read_image, encode_image, save_image, decode_image
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
@@ -23,4 +23,11 @@ PYTHON_LOGGER.setLevel(logging.DEBUG)
 FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__)))
 
 signature = sign("key.prev", "Pneedle")
+
+img = read_image("test-img.jpg")
+encode_img = encode_image(img, str(signature))
+save_image("encode.png", encode_img)
+img = read_image("encode.png")
+signut = decode_image(img)
+print(verify("key.pub", "Pneedle", signut))
 print(verify("key.pub", "Pneedle", signature))

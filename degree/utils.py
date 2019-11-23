@@ -2,10 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import os
+
 import logging.handlers
+import os
+
 import cv2
-from .const import COMPANY_NAME
+
+from .const import COMPANY_NAME, DEGREE_TEMPLATE_PATH
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
@@ -48,28 +51,29 @@ def save_image(image_path, image):
         return False
 
 
-def generate_degree_image(template, player_name, player_score):
+def generate_degree_image(player_name, player_score):
     """
     Create the diploma from a template.
-    :param template: (Image) The template image of the diploma.
     :param player_name: (String) The player's name.
     :param player_score: (String) The player's score.
-    :return: Nothing
+    :return: (ndarray) generate image
     """
+    template = read_image(DEGREE_TEMPLATE_PATH)
     # Adding player's name
     add_text_to_image(template, player_name, 210, 88, 1.8)
-    final_img = read_image("pokemon_card_with_text.png")
 
     # Adding description
-    add_text_to_image(final_img, "Congratz!", 100, 660, 2)
-    add_text_to_image(final_img, "Now you're a true MLG membre!", 100, 720, 1)
+    add_text_to_image(template, "Congratz!", 100, 660, 2)
+    add_text_to_image(template, "Now you're a true MLG membre!", 100, 720, 1)
 
     # Adding score
-    add_text_to_image(final_img, "Your score", 450, 930, 1)
-    add_text_to_image(final_img, player_score, 470, 1015, 1.5)
+    add_text_to_image(template, "Your score", 450, 930, 1)
+    add_text_to_image(template, str(player_score), 470, 1015, 1.5)
 
     # Adding company
-    add_text_to_image(final_img, COMPANY_NAME, 90, 930, 2.5)
+    add_text_to_image(template, COMPANY_NAME, 90, 930, 2.5)
+
+    return template
 
 
 def add_text_to_image(image, text, x, y, font_size):
@@ -89,7 +93,3 @@ def add_text_to_image(image, text, x, y, font_size):
     line_type = 2
 
     cv2.putText(image, text, bottom_left_corner_of_text, font, font_scale, font_color, line_type)
-    cv2.imwrite("pokemon_card_with_text.png", image)
-
-
-

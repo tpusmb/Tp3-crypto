@@ -16,8 +16,9 @@ from __future__ import absolute_import
 
 import logging.handlers
 import os
-from degree import *
+
 from docopt import docopt
+
 from degree import read_image, decode_image
 
 PYTHON_LOGGER = logging.getLogger(__name__)
@@ -39,7 +40,3 @@ FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__
 args = docopt(__doc__)
 img = read_image(args["<image-path>"])
 PYTHON_LOGGER.info("Decode message found: {}".format(decode_image(img)))
-
-encrypt("Oh my god")
-print(decrypt("encrypted_message"))
-

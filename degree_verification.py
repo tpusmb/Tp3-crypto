@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 """
+Encode a message into image
 
 Usage:
-  creat_rsa_keys.py <file-name-public-key>  <file-name-private-key> [--length=<length>]
+  degree_verification.py <private-key-path> <degree-image-path>
 
 Options:
-  -h --help                  Show this screen.
-  <file-name-public-key>     Path to the public key to save
-  <file-name-private-key>    Path to the private key to save
-  --length=<length>          Length of the key [default: 2048]
+  -h --help                   Show this screen.
+  <private-key-path>          Path to the private key file
+  <degree-image-path>         Name of degree image to do the verification
 """
 
 from __future__ import absolute_import
@@ -20,12 +20,13 @@ import os
 
 from docopt import docopt
 
-from degree import generate_keys
+from degree import read_image
+from degree.degree_generator import verify_degree
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
     os.mkdir("log")
-HDLR = logging.handlers.TimedRotatingFileHandler("log/creat_rsa_keys.log",
+HDLR = logging.handlers.TimedRotatingFileHandler("log/degree_verification.log",
                                                  when="midnight", backupCount=60)
 STREAM_HDLR = logging.StreamHandler()
 FORMATTER = logging.Formatter("%(asctime)s %(filename)s [%(levelname)s] %(message)s")
@@ -39,4 +40,7 @@ PYTHON_LOGGER.setLevel(logging.DEBUG)
 FOLDER_ABSOLUTE_PATH = os.path.normpath(os.path.dirname(os.path.abspath(__file__)))
 
 args = docopt(__doc__)
-generate_keys(args["<file-name-public-key>"], args["<file-name-private-key>"], int(args["--length"]))
+img = read_image(args["<degree-image-path>"])
+verification_message = "authentic" if verify_degree(args["<private-key-path>"], img) else "not authentic"
+PYTHON_LOGGER.info("The input degree {} is {}".format(os.path.basename(args["<degree-image-path>"]),
+                                                      verification_message))
