@@ -23,7 +23,7 @@ import os
 from docopt import docopt
 
 from degree import save_image
-from degree.degree_generator import sign_degree_generator
+from degree import sign_degree_generator
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):

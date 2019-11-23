@@ -21,7 +21,7 @@ import os
 from docopt import docopt
 
 from degree import read_image
-from degree.degree_generator import verify_degree
+from degree import verify_degree
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
