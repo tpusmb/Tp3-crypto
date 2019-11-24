@@ -7,3 +7,5 @@ tensorflow==1.15.0
 matplotlib
 tqdm
 pillow
+flask-bootstrap
+waitress

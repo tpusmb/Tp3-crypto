@@ -1,0 +1,27 @@
+{%- extends "base.html" %}
+
+{% block content %}
+    <!DOCTYPE html>
+    <html lang="en" dir="ltr">
+        <head>
+            <meta charset="utf-8">
+            <title>Degree creation</title>
+            <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+        </head>
+        <body>
+            <header>
+                <div class="container">
+                    <h1 class="logo">Degree creation</h1>
+                    <form action = "{{ url_for('download') }}" method = "POST">
+                        <p>Your name:</p>
+                        <p><input type = "text" name = "player_name" required/></p>
+                        <p>Your score:</p>
+                        <p><input type = "number" name = "player_score" required/></p>
+                        <p>Download: <input type = "submit" value = "Classic method" name="classic"/>   <input type = "submit" value = "Neuronal method" name="neuronal"/></p>
+                    </form>
+                </div>
+            </header>
+        </body>
+    </html>
+{%- endblock %}
+

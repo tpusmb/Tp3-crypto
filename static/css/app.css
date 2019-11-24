@@ -1,0 +1,15 @@
+.table-container {
+    position: relative;
+    width: 500px;
+    height: 500px;
+}
+
+.category-1{
+    background-color: #00698A;
+    color: white;
+}
+
+.category-2{
+    background-color: #00A6DB;
+    color: white;
+}

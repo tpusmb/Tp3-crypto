@@ -93,3 +93,14 @@ def add_text_to_image(image, text, x, y, font_size):
     line_type = 2
 
     cv2.putText(image, text, bottom_left_corner_of_text, font, font_scale, font_color, line_type)
+
+
+def qr_code_reader(image):
+    qrDecoder = cv2.QRCodeDetector()
+
+    # Detect and decode the qrcode
+    data, bbox, rectifiedImage = qrDecoder.detectAndDecode(image)
+    if len(data) > 0:
+        return data
+    else:
+        return None

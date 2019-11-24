@@ -1,0 +1,31 @@
+{# This simple template derives from ``base.html``. See ``base.html`` for
+   more information about template inheritance. #}
+{%- extends "base.html" %}
+
+{% block content %}
+    <!DOCTYPE html>
+        <html lang="en" dir="ltr">
+        <head>
+            <meta charset="utf-8">
+            <title>Home page</title>
+            <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+        </head>
+        <body>
+            <header>
+                <div class="container">
+                <h1 class="logo">Degree management by Design</h1>
+                <strong><nav>
+                    <ul class="menu">
+                    <li><a href="{{ url_for('degree_creator') }}">Create a degree</a></li>
+                    <li><a href="{{ url_for('degree_validator') }}">Verify a degree</a></li>
+                    </ul>
+                </nav></strong>
+                </div>
+            </header>
+
+            {% block content_nav %}
+            {% endblock %}
+
+        </body>
+        </html>
+{%- endblock %}
