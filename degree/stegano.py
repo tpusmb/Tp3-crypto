@@ -49,6 +49,7 @@ def encode_image(img, msg):
     :param msg: (string) message to add
     :return: (ndarray) image with encode message
     """
+    img = img.astype(int)
     msg_gen = char_generator("{},{}".format(len(msg), msg))
     for i in range(len(img)):
         for j in range(len(img[0])):
@@ -74,7 +75,7 @@ def decode_image(img):
                 byt_acc += str((img[i - 1][j - 1][0] >> 0) & 1)
                 if len(byt_acc) == 8:
                     decode_char = bytes_to_char(byt_acc)
-                    if decode_char == ",":
+                    if decode_char == "," and message_length is None:
                         message_length = int(message)
                         message = ''
                     else:

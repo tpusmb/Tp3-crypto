@@ -5,12 +5,13 @@
 Main script to run the degree management web-app.
 
 Usage:
-   application.py <port> <private-key-path>
+   application.py <port> <private-key-path> <path-water-mark-template>
 
 Options:
-    -h --help           Show this screen.
-    <port>              Port to run the server example 8080
-    <private-key-path>  Path to the private key
+    -h --help                   Show this screen.
+    <port>                      Port to run the server example 8080
+    <private-key-path>          Path to the private key
+    <path-water-mark-template>  Path to the water mark template generate by water_mark_generator.py
 """
 
 from __future__ import absolute_import
@@ -24,7 +25,8 @@ from flask_bootstrap import Bootstrap
 from waitress import serve
 from werkzeug.utils import secure_filename
 
-from degree import save_image, read_image, sign_degree_generator, verify_degree
+from degree import save_image, read_image, sign_degree_generator, verify_degree, DeepWaterMark, \
+    sign_deep_degree_generator, verify_deep_degree
 
 PYTHON_LOGGER = logging.getLogger(__name__)
 if not os.path.exists("log"):
@@ -47,6 +49,8 @@ app.secret_key = "zefzarega5zerg+6e5rzeafz"
 Bootstrap(app)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 PRIVATE_KEY_PATH = None
+WATER_MARK_PATH = None
+DEEP_WATER_MARK = DeepWaterMark()
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -83,18 +87,21 @@ def download():
             player_name = request.form["player_name"]
             player_score = request.form["player_score"]
 
-            if request.form["classic"] is not None:
+            if "classic" in request.form:
                 output_image = sign_degree_generator(PRIVATE_KEY_PATH, player_name, int(player_score))
                 save_image("generated_degree.png", output_image)
             # Neuronal method
-            """elif request.form["neuronal"] is not None:
-                output_image = 
-                save_image("generated_degree.png", output_image)"""
+            elif "neuronal" in request.form:
+                output_image = sign_deep_degree_generator(PRIVATE_KEY_PATH,
+                                                          WATER_MARK_PATH,
+                                                          player_name,
+                                                          int(player_score),
+                                                          DEEP_WATER_MARK)
+                save_image("generated_degree.png", output_image)
             return send_file("generated_degree.png", as_attachment=True)
-
         except Exception as e:
-            PYTHON_LOGGER.error("error in download: {}".format(e))
-            return "Generation failed. Please check your input data."
+            PYTHON_LOGGER.error("error in creation: {}".format(e))
+            return "Creation failed"
 
 
 @app.route("/upload", methods=['GET', 'POST'])
@@ -109,14 +116,17 @@ def upload():
             uploaded_file.save(file_name)
             img = read_image(file_name)
 
-            if request.form["classic"] is not None:
-                verification_message = "authentic" if verify_degree(PRIVATE_KEY_PATH, img) else "not authentic"
-                return "The input degree {} is {}.".format(os.path.basename(file_name), verification_message)
-            # Neuronal method
-            """elif request.form["neuronal"] is not None:
-                verification_message = "authentic" if verify_degree("private_key", img) else "not authentic"
-                return "The input degree {} is {}.".format(os.path.basename(file_name), verification_message)"""
+            if "classic" in request.form:
+                verify, score = verify_degree(PRIVATE_KEY_PATH, img)
 
+            # Neuronal method
+            else:
+                verify, score = verify_deep_degree(PRIVATE_KEY_PATH, DEEP_WATER_MARK, img)
+
+            verification_message = "authentic" if verify else "not authentic"
+            return "The input degree {} is {}. The score his {}".format(os.path.basename(file_name),
+                                                                        verification_message,
+                                                                        score)
         except Exception as e:
             PYTHON_LOGGER.error("error in download: {}".format(e))
             return "Verification failed. Please check your input file."
@@ -129,5 +139,6 @@ if __name__ == "__main__":
     except ValueError:
         port = 8080
     PRIVATE_KEY_PATH = args["<private-key-path>"]
+    WATER_MARK_PATH = args["<path-water-mark-template>"]
     PYTHON_LOGGER.info("Start server to the port {}".format(port))
     serve(app, host="0.0.0.0", port=port)

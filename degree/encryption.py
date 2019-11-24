@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import
 
+import binascii
 import logging.handlers
 import os
 
@@ -48,38 +49,24 @@ def encrypt(message, path_public_key):
     encrypt a message
     :param message: (String) The message to encrypt.
     :param path_public_key: (string) File name to the public key
-    :return: (list) Encrypt message
+    :return: (string) Encrypt message
     """
-    data = message.encode("utf-8")
+    msg = message.encode()
     public_key = RSA.import_key(open(path_public_key).read())
-    session_key = get_random_bytes(16)
-
-    # Encrypt the session key with the public RSA key
-    cipher_rsa = PKCS1_OAEP.new(public_key)
-    enc_session_key = cipher_rsa.encrypt(session_key)
-
-    # Encrypt the message with the AES session key
-    cipher_aes = AES.new(session_key, AES.MODE_EAX)
-    ciphertext, tag = cipher_aes.encrypt_and_digest(data)
-    return [enc_session_key, cipher_aes.nonce, tag, ciphertext]
+    encryptor = PKCS1_OAEP.new(public_key)
+    encrypted = encryptor.encrypt(msg)
+    return binascii.hexlify(encrypted).decode()
 
 
 def decrypt(encrypt_message, path_private_key):
     """
     Decrypt an encrypted message
-    :param encrypt_message: (list) Encrypt message generate by encrypt function
+    :param encrypt_message: (string) Encrypt message generate by encrypt function
     :param path_private_key: (string) File name to the private key
     :return: (String) The decrypted message.
     """
+    encrypt_message = binascii.unhexlify(encrypt_message.encode())
     private_key = RSA.import_key(open(path_private_key).read())
-
-    enc_session_key, nonce, tag, ciphertext = encrypt_message
-
-    # Decrypt the session key with the private RSA key
-    cipher_rsa = PKCS1_OAEP.new(private_key)
-    session_key = cipher_rsa.decrypt(enc_session_key)
-
-    # Decrypt the message with the AES session key
-    cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-    data = cipher_aes.decrypt_and_verify(ciphertext, tag)
-    return data.decode("utf-8")
+    decryptor = PKCS1_OAEP.new(private_key)
+    decrypted = decryptor.decrypt(encrypt_message)
+    return decrypted.decode()

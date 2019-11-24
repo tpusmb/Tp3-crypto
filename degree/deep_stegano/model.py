@@ -331,4 +331,10 @@ class DeepStegano:
             raise ValueError("Nee to init the model by running load_model")
         hidden = self.sess.run(self.deploy_hide_image_op, feed_dict={'input_prep:0': secret, 'input_hide:0': cover})
         revealed = self.sess.run(self.deploy_reveal_image_op, feed_dict={'deploy_covered:0': hidden})
-        return denormalize_batch(hidden.squeeze()), denormalize_batch(revealed.squeeze())
+        return denormalize_batch(hidden.squeeze()) * 255, denormalize_batch(revealed.squeeze()) * 255
+
+    def revealed_image(self, image):
+        if self.sess is None or self.deploy_reveal_image_op is None:
+            raise ValueError("Nee to init the model by running load_model")
+        revealed = self.sess.run(self.deploy_reveal_image_op, feed_dict={'deploy_covered:0': image})
+        return denormalize_batch(revealed.squeeze()) * 255

@@ -9,3 +9,4 @@ tqdm
 pillow
 flask-bootstrap
 waitress
+git+https://github.com/ascribe/image-match.git
