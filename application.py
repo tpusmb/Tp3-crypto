@@ -50,7 +50,7 @@ Bootstrap(app)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 PRIVATE_KEY_PATH = None
 WATER_MARK_PATH = None
-DEEP_WATER_MARK = DeepWaterMark()
+DEEP_WATER_MARK = None
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -83,25 +83,20 @@ def download():
     Download a degree.
     """
     if request.method == 'POST':
-        try:
-            player_name = request.form["player_name"]
-            player_score = request.form["player_score"]
+        player_name = request.form["player_name"]
+        player_score = request.form["player_score"]
 
-            if "classic" in request.form:
-                output_image = sign_degree_generator(PRIVATE_KEY_PATH, player_name, int(player_score))
-                save_image("generated_degree.png", output_image)
-            # Neuronal method
-            elif "neuronal" in request.form:
-                output_image = sign_deep_degree_generator(PRIVATE_KEY_PATH,
-                                                          WATER_MARK_PATH,
-                                                          player_name,
-                                                          int(player_score),
-                                                          DEEP_WATER_MARK)
-                save_image("generated_degree.png", output_image)
-            return send_file("generated_degree.png", as_attachment=True)
-        except Exception as e:
-            PYTHON_LOGGER.error("error in creation: {}".format(e))
-            return "Creation failed"
+        if "classic" in request.form:
+            output_image = sign_degree_generator(PRIVATE_KEY_PATH, player_name, int(player_score))
+            save_image("generated_degree.png", output_image)
+        # Neuronal method
+        elif "neuronal" in request.form:
+            output_image = sign_deep_degree_generator(PRIVATE_KEY_PATH,
+                                                      player_name,
+                                                      int(player_score),
+                                                      DEEP_WATER_MARK)
+            save_image("generated_degree.png", output_image)
+        return send_file("generated_degree.png", as_attachment=True)
 
 
 @app.route("/upload", methods=['GET', 'POST'])
@@ -139,6 +134,6 @@ if __name__ == "__main__":
     except ValueError:
         port = 8080
     PRIVATE_KEY_PATH = args["<private-key-path>"]
-    WATER_MARK_PATH = args["<path-water-mark-template>"]
+    DEEP_WATER_MARK = DeepWaterMark(args["<path-water-mark-template>"])
     PYTHON_LOGGER.info("Start server to the port {}".format(port))
     serve(app, host="0.0.0.0", port=port)

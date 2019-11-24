@@ -42,19 +42,17 @@ def sign_degree_generator(path_private_key, player_name, score):
     return encode_image(degree_image, str(signature) + "," + encrypted_score)
 
 
-def sign_deep_degree_generator(path_private_key, path_to_water_mark, player_name, score, deep_water_mark):
+def sign_deep_degree_generator(path_private_key, player_name, score, deep_water_mark):
     """
     Creat a degree with signature into the image to control if the degree is authentic
     :param path_private_key: (string) Path to the private key file
-    :param path_to_water_mark: (string) Path to the water mark image
     :param player_name: (string) Name of the player
     :param score: (int) Score of the player
     :param deep_water_mark: (DeepWaterMark) Deep watermark instance
     :return: (ndarray) The degree image
     """
     degree_image = generate_degree_image(player_name, score)
-    template = read_image(path_to_water_mark)
-    hiden = deep_water_mark.creat_image_with_water_mark(template, degree_image)
+    hiden = deep_water_mark.creat_image_with_water_mark(degree_image)
     encrypted_score = encrypt(str(score), path_private_key)
     return encode_image(cv2.resize(hiden, (486, 686)), encrypted_score)
 
@@ -80,6 +78,5 @@ def verify_deep_degree(path_private_key, deep_water_mark, degree_image):
     :return: (tuple bool and int) True the degree his authentic False his not authentic.
         And an interger to say the degree score
     """
-    template = read_image("water_mark_template.jpg")
     score = decode_image(degree_image)
-    return deep_water_mark.verify_image(template, degree_image), decrypt(score, path_private_key)
+    return deep_water_mark.verify_image(degree_image), decrypt(score, path_private_key)
