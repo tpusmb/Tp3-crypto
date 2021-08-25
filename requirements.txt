@@ -3,7 +3,7 @@ pycryptodome
 qrcode
 flask
 docopt
-tensorflow==1.15.2
+tensorflow==2.5.1
 matplotlib
 tqdm
 pillow
